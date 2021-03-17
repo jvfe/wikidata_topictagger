@@ -7,7 +7,11 @@
 
       <v-spacer></v-spacer>
 
-      <v-btn href="#" target="_blank" text>
+      <v-btn
+        href="https://github.com/jvfe/wikidata_topictagger"
+        target="_blank"
+        text
+      >
         <span class="mr-2">Source Code</span>
         <v-icon>mdi-github</v-icon>
       </v-btn>

@@ -2,7 +2,7 @@
   <v-sheet color="accent lighten-4" elevation="10" rounded class="pa-2">
     <v-col>
       <p v-if="term" class="body-2">
-        Obtaining up to 300 articles about {{ term.label }} that do not have
+        Obtaining up to 300 articles about {{ term.label }} that don't have
         <a
           :href="`http://www.wikidata.org/entity/${term.id}`"
           target="_blank"
@@ -65,7 +65,8 @@ export default {
         this.term.id,
         this.term.label
       );
-      this.quickstatements = queryResult;
+      this.quickstatements =
+        queryResult == "" ? "Couldn't find any articles 😥" : queryResult;
       this.loadingQS = false;
     },
     copyCommands: function() {

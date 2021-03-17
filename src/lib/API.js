@@ -50,7 +50,8 @@ async function querySPARQLService(qid, qidLabel) {
       }
         
         BIND(IRI(CONCAT(STR(wd:), ?page_title)) AS ?item)
-        
+        ?item wdt:P1476 ?title.
+        FILTER CONTAINS(LCASE(?title), "${qidLabel.toLowerCase()}").
       } LIMIT 300
   `;
   /* eslint-enable */
