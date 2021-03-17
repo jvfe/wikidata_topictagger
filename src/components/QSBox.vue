@@ -1,5 +1,5 @@
 <template>
-  <v-sheet elevation="10" rounded>
+  <v-sheet color="accent lighten-4" elevation="10" rounded class="pa-2">
     <v-col>
       <p v-if="term" class="body-2">
         Obtaining up to 300 articles about {{ term.label }} that do not have
