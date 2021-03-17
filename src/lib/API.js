@@ -1,5 +1,5 @@
 async function queryAPI(url) {
-  const proxy = "https://cors-anywhere.herokuapp.com/";
+  const proxy = "https://lit-fortress-26855.herokuapp.com/";
   const queryURL = `${proxy}${url}`;
   try {
     const request = await fetch(queryURL, {
