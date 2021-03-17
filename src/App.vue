@@ -22,17 +22,17 @@
           :search-input.sync="search"
           :items="terms"
           chips
-          filled
+          deletable-chips
+          hint="Start typing to search for a topic"
           hide-no-data
-          hide-details
           hide-selected
           no-filter
           color="blue-grey lighten-2"
           label="Search for a topic"
           item-text="id"
-          item-value="id"
-          append-icon="mdi-magnify"
+          prepend-icon="mdi-magnify"
           solo
+          return-object
         >
           <template v-slot:item="{ item }">
             <v-list-item-content>
@@ -46,13 +46,52 @@
           </template>
         </v-autocomplete>
       </v-col>
+      <v-col>
+        <v-sheet elevation="10" rounded>
+          <v-col>
+            <p v-if="term" class="body-2">
+              Obtaining up to 300 articles about {{ term.label }} that do not
+              have
+              <a
+                :href="`http://www.wikidata.org/entity/${term.id}`"
+                target="_blank"
+                >{{ term.id }}</a
+              >
+              as a main subject
+            </p>
+            <v-btn @click="copyCommands" color="primary" class="ma-2">
+              <v-icon small>mdi-clipboard-outline</v-icon>
+              Copy
+            </v-btn>
+            <v-btn
+              color="warning"
+              href="https://quickstatements.toolforge.org/#/batch"
+              target="_blank"
+              class="ma-2"
+            >
+              <v-icon small>mdi-arrow-top-right</v-icon>
+              Go to Quickstatements
+            </v-btn>
+            <v-textarea
+              outlined
+              readonly
+              height="100%"
+              :loading="loadingQS"
+              class="quickstatements mt-1"
+              label="Quickstatements"
+              :value="quickstatements"
+              id="qsArea"
+            ></v-textarea>
+          </v-col>
+        </v-sheet>
+      </v-col>
     </v-main>
   </v-app>
 </template>
 
 <script>
 import HelloWorld from "./components/HelloWorld";
-import searchWikibase from "./lib/API";
+import { searchWikibase, querySPARQLService } from "./lib/API";
 
 export default {
   name: "App",
@@ -65,16 +104,20 @@ export default {
     return {
       term: "",
       search: "",
+      quickstatements: "",
       terms: [],
       loadingComplete: false,
-      tab: null
+      loadingQS: false
     };
   },
 
   watch: {
     term(val) {
-      if (val != null) this.tab = 0;
-      else this.tab = null;
+      if (val != null) {
+        this.fetchQuery();
+      } else {
+        this.quickstatements = "";
+      }
     },
     search(val) {
       if (!val) return;
@@ -88,13 +131,33 @@ export default {
 
       this._timerId = setTimeout(() => {
         this.fetch(val);
-      }, 1000);
+      }, 800);
     },
     fetch: async function(val) {
       this.loadingComplete = true;
       this.terms = await searchWikibase(val);
       this.loadingComplete = false;
+    },
+    fetchQuery: async function() {
+      this.loadingQS = true;
+      const queryResult = await querySPARQLService(
+        this.term.id,
+        this.term.label
+      );
+      this.quickstatements = queryResult;
+      this.loadingQS = false;
+    },
+    copyCommands: function() {
+      const qsAreaElement = document.querySelector("#qsArea");
+      qsAreaElement.select();
+      document.execCommand("copy");
     }
   }
 };
 </script>
+
+<style scoped>
+.quickstatements {
+  font-family: monospace;
+}
+</style>
